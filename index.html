@@ -1,79 +1,99 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Latihan Ujian</title>
-  <style>
-    body { font-family: Arial; max-width: 800px; margin:auto }
-    .opsi { 
-      border:1px solid #ccc; 
-      padding:10px; 
-      margin:5px 0; 
-      cursor:pointer 
-    }
-    .opsi:hover { background:#f0f0f0 }
-    .benar { background:#c8f7c5 }
-    .salah { background:#f7c5c5 }
-  </style>
+<title>Latihan Ujian</title>
+<style>
+body{font-family:Arial;max-width:800px;margin:auto}
+.opsi{border:1px solid #ccc;padding:10px;margin:8px 0;cursor:pointer}
+.opsi.active{background:#ddd}
+.benar{background:#c8f7c5}
+.salah{background:#f7c5c5}
+</style>
 </head>
 <body>
 
 <h2>Latihan Ujian</h2>
 
-Filter BAB:
-<select id="babSelect"></select>
+BAB:
+<select id="bab"></select>
+<button onclick="mulai()">Mulai</button>
 
-<div id="soalBox"></div>
+<div id="soal"></div>
+<div id="opsi"></div>
+
+<br>
+<button onclick="prev()">⬅ Prev</button>
+<button onclick="next()">Next ➡</button>
+<button onclick="submit()">Submit</button>
+
+<p id="status"></p>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycby0DsAhMliCH9Wc99tmyfmZaysqOdJsYSN6TAy1-3NZqBfSnaLGclvlFB5tuiwS-OWUEw/exec";
+const API = "https://script.google.com/macros/s/AKfycbxdc8_NX3GygwCQQoYZSoVUMip2fUuNT-JRILQg1tG9tbar8C_HI1JnzpsAXJMoAyOH9Q/exec";
+let semua=[], aktif=[], index=0;
+let jawabanUser = {};
 
-let semuaSoal = [];
-let soalAktif = [];
-
-fetch(API_URL)
-.then(res => res.json())
-.then(data => {
-  semuaSoal = data;
-  buatDropdownBAB(data);
+fetch(API).then(r=>r.json()).then(d=>{
+  semua=d;
+  const bab = [...new Set(d.map(x=>x.bab))];
+  bab.forEach(b=>{
+    const o=document.createElement("option");
+    o.value=b;o.text="BAB "+b;
+    babSel.appendChild(o);
+  });
 });
 
-function buatDropdownBAB(data) {
-  const bab = [...new Set(data.map(x => x.bab))];
-  const select = document.getElementById("babSelect");
+const babSel = document.getElementById("bab");
 
-  bab.forEach(b => {
-    const opt = document.createElement("option");
-    opt.value = b;
-    opt.text = "BAB " + b;
-    select.appendChild(opt);
+function mulai(){
+  aktif = semua.filter(x=>x.bab==babSel.value);
+  aktif.sort((a,b)=>a.nomor-b.nomor);
+  index=0;
+  tampil();
+}
+
+function tampil(){
+  const s = aktif[index];
+  document.getElementById("soal").innerHTML = 
+    `<h3>Soal ${s.nomor}</h3><p>${s.soal}</p>`;
+
+  let html="";
+  for(let k in s.opsi){
+    let cls = jawabanUser[s.nomor]==k ? "opsi active":"opsi";
+    html += `<div class="${cls}" onclick="pilih('${k}')">${s.opsi[k]}</div>`;
+  }
+  document.getElementById("opsi").innerHTML=html;
+  status.innerText = `${index+1} / ${aktif.length}`;
+}
+
+function pilih(k){
+  jawabanUser[aktif[index].nomor]=k;
+  tampil();
+}
+
+function next(){ if(index<aktif.length-1){index++;tampil();}}
+function prev(){ if(index>0){index--;tampil();}}
+
+function submit(){
+  let benar=0;
+  aktif.forEach(s=>{
+    if(jawabanUser[s.nomor]==s.jawaban) benar++;
   });
 
-  select.onchange = () => {
-    soalAktif = semuaSoal.filter(x => x.bab == select.value);
-    tampilSoal(0);
-  };
-
-  select.onchange();
+  alert(`Skor: ${benar} / ${aktif.length}`);
+  tampilHasil();
 }
 
-function tampilSoal(i) {
-  const s = soalAktif[i];
-  let html = `<h3>${s.soal}</h3>`;
-
-  for (let k in s.opsi) {
-    html += `<div class="opsi" onclick="cek('${k}',this)">${s.opsi[k]}</div>`;
-  }
-
-  document.getElementById("soalBox").innerHTML = html;
-  window.kunci = s.jawaban;
-}
-
-function cek(pilih, el) {
-  if (pilih == kunci) {
-    el.classList.add("benar");
-  } else {
-    el.classList.add("salah");
-  }
+function tampilHasil(){
+  aktif.forEach(s=>{
+    const pilih = jawabanUser[s.nomor];
+    const divs = document.querySelectorAll(".opsi");
+    divs.forEach((d,i)=>{
+      const k = ["E","F","G","H","I"][i];
+      if(k==s.jawaban) d.classList.add("benar");
+      if(k==pilih && k!=s.jawaban) d.classList.add("salah");
+    });
+  });
 }
 </script>
 
