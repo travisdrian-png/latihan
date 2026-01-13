@@ -1,99 +1,302 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-<title>Latihan Ujian</title>
-<style>
-body{font-family:Arial;max-width:800px;margin:auto}
-.opsi{border:1px solid #ccc;padding:10px;margin:8px 0;cursor:pointer}
-.opsi.active{background:#ddd}
-.benar{background:#c8f7c5}
-.salah{background:#f7c5c5}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Latihan Ujian Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --text: #1e293b;
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+        
+        .container { max-width: 700px; margin: 0 auto; }
+
+        /* Card Style */
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        h2 { margin-top: 0; color: var(--primary); text-align: center; }
+
+        /* Input & Button */
+        .setup-zone { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; }
+        select {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            flex-grow: 1;
+            max-width: 300px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+            background: var(--primary);
+            color: white;
+        }
+        button:hover { background: var(--primary-hover); transform: translateY(-1px); }
+        button:disabled { background: #cbd5e1; cursor: not-allowed; }
+        
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+        .btn-outline:hover { background: #eef2ff; }
+
+        /* Progress Bar */
+        .progress-container {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        #progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        /* Question & Options */
+        #soal-container { min-height: 200px; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .opsi {
+            border: 2px solid #e2e8f0;
+            padding: 15px 20px;
+            margin: 10px 0;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .opsi:hover { border-color: var(--primary); background: #f5f3ff; }
+        .opsi.active { border-color: var(--primary); background: #eef2ff; box-shadow: 0 0 0 1px var(--primary); }
+        
+        /* State Benar/Salah */
+        .opsi.benar { background: #dcfce7 !important; border-color: var(--success) !important; color: #166534; }
+        .opsi.salah { background: #fee2e2 !important; border-color: var(--danger) !important; color: #991b1b; }
+
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 30px; }
+        
+        #timer { text-align: center; font-weight: bold; font-size: 1.2rem; margin-bottom: 10px; color: var(--danger); }
+        
+        .status-text { text-align: center; font-size: 0.9rem; color: #64748b; margin-top: 10px; }
+
+        /* Result Overlay */
+        #result-screen { text-align: center; display: none; }
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 20px auto;
+        }
+    </style>
 </head>
 <body>
 
-<h2>Latihan Ujian</h2>
+<div class="container">
+    <div class="card" id="setup-card">
+        <h2>Latihan Ujian</h2>
+        <div class="setup-zone">
+            <select id="bab">
+                <option value="">Pilih Bab...</option>
+            </select>
+            <button onclick="mulai()">Mulai Ujian</button>
+        </div>
+    </div>
 
-BAB:
-<select id="bab"></select>
-<button onclick="mulai()">Mulai</button>
+    <div id="quiz-zone" style="display: none;">
+        <div id="timer">00:00</div>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
 
-<div id="soal"></div>
-<div id="opsi"></div>
+        <div class="card">
+            <div id="soal-container">
+                <div id="soal-content"></div>
+                <div id="opsi-container"></div>
+            </div>
 
-<br>
-<button onclick="prev()">⬅ Prev</button>
-<button onclick="next()">Next ➡</button>
-<button onclick="submit()">Submit</button>
+            <div class="nav-buttons">
+                <button class="btn-outline" onclick="prev()" id="btn-prev">⬅ Kembali</button>
+                <button class="btn-outline" onclick="next()" id="btn-next">Lanjut ➡</button>
+            </div>
+            <div style="margin-top: 20px; text-align: center;">
+                <button onclick="confirmSubmit()" style="background: var(--success); width: 100%;">Selesai & Kirim Jawaban</button>
+            </div>
+            <p class="status-text" id="status-posisi"></p>
+        </div>
+    </div>
 
-<p id="status"></p>
+    <div class="card" id="result-screen">
+        <h2>Hasil Ujian</h2>
+        <div class="score-circle" id="score-val">0</div>
+        <p id="score-desc"></p>
+        <button onclick="location.reload()">Coba Lagi</button>
+        <button class="btn-outline" onclick="tutupHasil()">Review Jawaban</button>
+    </div>
+</div>
 
 <script>
+// Ganti dengan URL API Anda yang benar
 const API = "https://script.google.com/macros/s/AKfycbxdc8_NX3GygwCQQoYZSoVUMip2fUuNT-JRILQg1tG9tbar8C_HI1JnzpsAXJMoAyOH9Q/exec";
-let semua=[], aktif=[], index=0;
-let jawabanUser = {};
 
-fetch(API).then(r=>r.json()).then(d=>{
-  semua=d;
-  const bab = [...new Set(d.map(x=>x.bab))];
-  bab.forEach(b=>{
-    const o=document.createElement("option");
-    o.value=b;o.text="BAB "+b;
-    babSel.appendChild(o);
-  });
-});
+let semuaData = [], aktif = [], index = 0;
+let jawabanUser = {};
+let isFinished = false;
+let waktu = 0;
+let timerInterval;
 
 const babSel = document.getElementById("bab");
+const quizZone = document.getElementById("quiz-zone");
+const setupCard = document.getElementById("setup-card");
+const resultScreen = document.getElementById("result-screen");
 
-function mulai(){
-  aktif = semua.filter(x=>x.bab==babSel.value);
-  aktif.sort((a,b)=>a.nomor-b.nomor);
-  index=0;
-  tampil();
+// Fetch Data Awal
+fetch(API)
+    .then(r => r.json())
+    .then(data => {
+        semuaData = data;
+        const listBab = [...new Set(data.map(x => x.bab))];
+        listBab.forEach(b => {
+            const opt = document.createElement("option");
+            opt.value = b;
+            opt.textContent = "Bab " + b;
+            babSel.appendChild(opt);
+        });
+    })
+    .catch(err => alert("Gagal mengambil data. Pastikan API aktif."));
+
+function mulai() {
+    if (!babSel.value) return alert("Pilih Bab terlebih dahulu!");
+    
+    aktif = semuaData.filter(x => x.bab == babSel.value);
+    aktif.sort((a, b) => a.nomor - b.nomor);
+    
+    index = 0;
+    jawabanUser = {};
+    isFinished = false;
+    
+    setupCard.style.display = "none";
+    quizZone.style.display = "block";
+    
+    startTimer();
+    tampil();
 }
 
-function tampil(){
-  const s = aktif[index];
-  document.getElementById("soal").innerHTML = 
-    `<h3>Soal ${s.nomor}</h3><p>${s.soal}</p>`;
-
-  let html="";
-  for(let k in s.opsi){
-    let cls = jawabanUser[s.nomor]==k ? "opsi active":"opsi";
-    html += `<div class="${cls}" onclick="pilih('${k}')">${s.opsi[k]}</div>`;
-  }
-  document.getElementById("opsi").innerHTML=html;
-  status.innerText = `${index+1} / ${aktif.length}`;
+function startTimer() {
+    waktu = 0;
+    timerInterval = setInterval(() => {
+        waktu++;
+        let m = Math.floor(waktu / 60).toString().padStart(2, '0');
+        let s = (waktu % 60).toString().padStart(2, '0');
+        document.getElementById("timer").innerText = `${m}:${s}`;
+    }, 1000);
 }
 
-function pilih(k){
-  jawabanUser[aktif[index].nomor]=k;
-  tampil();
-}
+function tampil() {
+    const s = aktif[index];
+    const containerSoal = document.getElementById("soal-content");
+    const containerOpsi = document.getElementById("opsi-container");
 
-function next(){ if(index<aktif.length-1){index++;tampil();}}
-function prev(){ if(index>0){index--;tampil();}}
+    // Update Progress
+    const persen = ((index + 1) / aktif.length) * 100;
+    document.getElementById("progress-bar").style.width = persen + "%";
+    document.getElementById("status-posisi").innerText = `Soal ${index + 1} dari ${aktif.length}`;
 
-function submit(){
-  let benar=0;
-  aktif.forEach(s=>{
-    if(jawabanUser[s.nomor]==s.jawaban) benar++;
-  });
+    // Tampil Soal
+    containerSoal.innerHTML = `<h3 style="margin-bottom:10px">Soal Nomor ${s.nomor}</h3><p style="font-size:1.1rem; line-height:1.6">${s.soal}</p>`;
 
-  alert(`Skor: ${benar} / ${aktif.length}`);
-  tampilHasil();
-}
+    // Tampil Opsi
+    let html = "";
+    // Kita asumsikan opsi di JSON menggunakan key A, B, C, D (Ubah sesuai data Anda)
+    const keys = Object.keys(s.opsi).sort(); 
+    
+    keys.forEach(k => {
+        let cls = "opsi";
+        if (jawabanUser[s.nomor] === k) cls += " active";
+        
+        // Logic warna jika sudah submit
+        if (isFinished) {
+            if (k === s.jawaban) cls += " benar";
+            if (jawabanUser[s.nomor] === k && k !== s.jawaban) cls += " salah";
+        }
 
-function tampilHasil(){
-  aktif.forEach(s=>{
-    const pilih = jawabanUser[s.nomor];
-    const divs = document.querySelectorAll(".opsi");
-    divs.forEach((d,i)=>{
-      const k = ["E","F","G","H","I"][i];
-      if(k==s.jawaban) d.classList.add("benar");
-      if(k==pilih && k!=s.jawaban) d.classList.add("salah");
+        html += `<div class="${cls}" onclick="${isFinished ? '' : `pilih('${k}')`}">
+                    <span style="width:30px; font-weight:bold">${k}.</span> 
+                    <span>${s.opsi[k]}</span>
+                 </div>`;
     });
-  });
+    containerOpsi.innerHTML = html;
+
+    // Navigasi button state
+    document.getElementById("btn-prev").disabled = (index === 0);
+    document.getElementById("btn-next").disabled = (index === aktif.length - 1);
+}
+
+function pilih(k) {
+    jawabanUser[aktif[index].nomor] = k;
+    tampil();
+}
+
+function next() { if (index < aktif.length - 1) { index++; tampil(); } }
+function prev() { if (index > 0) { index--; tampil(); } }
+
+function confirmSubmit() {
+    const terjawab = Object.keys(jawabanUser).length;
+    if (terjawab < aktif.length) {
+        if (!confirm(`Baru ${terjawab} dari ${aktif.length} soal terjawab. Yakin ingin selesai?`)) return;
+    }
+    submit();
+}
+
+function submit() {
+    clearInterval(timerInterval);
+    isFinished = true;
+    let benar = 0;
+    aktif.forEach(s => {
+        if (jawabanUser[s.nomor] === s.jawaban) benar++;
+    });
+
+    quizZone.style.display = "none";
+    resultScreen.style.display = "block";
+    
+    const skor = Math.round((benar / aktif.length) * 100);
+    document.getElementById("score-val").innerText = skor;
+    document.getElementById("score-desc").innerText = `Anda menjawab ${benar} benar dari ${aktif.length} soal.`;
+}
+
+function tutupHasil() {
+    resultScreen.style.display = "none";
+    quizZone.style.display = "block";
+    index = 0;
+    tampil();
 }
 </script>
 
