@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Ujian</title>
+  <style>
+    body { font-family: Arial; max-width: 800px; margin:auto }
+    .opsi { 
+      border:1px solid #ccc; 
+      padding:10px; 
+      margin:5px 0; 
+      cursor:pointer 
+    }
+    .opsi:hover { background:#f0f0f0 }
+    .benar { background:#c8f7c5 }
+    .salah { background:#f7c5c5 }
+  </style>
+</head>
+<body>
+
+<h2>Latihan Ujian</h2>
+
+Filter BAB:
+<select id="babSelect"></select>
+
+<div id="soalBox"></div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycby0DsAhMliCH9Wc99tmyfmZaysqOdJsYSN6TAy1-3NZqBfSnaLGclvlFB5tuiwS-OWUEw/exec";
+
+let semuaSoal = [];
+let soalAktif = [];
+
+fetch(API_URL)
+.then(res => res.json())
+.then(data => {
+  semuaSoal = data;
+  buatDropdownBAB(data);
+});
+
+function buatDropdownBAB(data) {
+  const bab = [...new Set(data.map(x => x.bab))];
+  const select = document.getElementById("babSelect");
+
+  bab.forEach(b => {
+    const opt = document.createElement("option");
+    opt.value = b;
+    opt.text = "BAB " + b;
+    select.appendChild(opt);
+  });
+
+  select.onchange = () => {
+    soalAktif = semuaSoal.filter(x => x.bab == select.value);
+    tampilSoal(0);
+  };
+
+  select.onchange();
+}
+
+function tampilSoal(i) {
+  const s = soalAktif[i];
+  let html = `<h3>${s.soal}</h3>`;
+
+  for (let k in s.opsi) {
+    html += `<div class="opsi" onclick="cek('${k}',this)">${s.opsi[k]}</div>`;
+  }
+
+  document.getElementById("soalBox").innerHTML = html;
+  window.kunci = s.jawaban;
+}
+
+function cek(pilih, el) {
+  if (pilih == kunci) {
+    el.classList.add("benar");
+  } else {
+    el.classList.add("salah");
+  }
+}
+</script>
+
+</body>
+</html>
