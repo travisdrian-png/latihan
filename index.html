@@ -2,297 +2,283 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exam Pro - Pastel Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Smart Exam Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
     <style>
-        /* --- DESIGN SYSTEM: PASTEL GREEN THEME --- */
+        /* --- DESIGN SYSTEM: PASTEL ADVANCE --- */
         :root {
-            /* Palette: Fresh Mint & Sage */
-            --primary: #42b883;        /* Vue Green - Segar */
-            --primary-dark: #33a06f;   /* Hover state */
-            --primary-light: #d1fae5;  /* Background accent */
-            --bg-body: #ecfdf5;        /* Very light mint background */
-            
-            --text-main: #334155;      /* Slate 700 - Softer than black */
-            --text-muted: #94a3b8;     /* Slate 400 */
-            
+            --primary: #42b883;
+            --primary-dark: #33a06f;
+            --primary-light: #d1fae5;
+            --bg-body: #f0fdf4; /* Lebih soft */
             --white: #ffffff;
-            --danger: #fb7185;         /* Pastel Red/Rose */
-            --warning: #fbbf24;        /* Warm Yellow */
-            
-            --shadow-sm: 0 4px 6px -1px rgba(66, 184, 131, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(66, 184, 131, 0.15);
-            
-            --radius: 20px;            /* Sudut yang lebih bulat */
+            --text-main: #334155;
+            --text-muted: #94a3b8;
+            --danger: #fb7185;
+            --warning: #fbbf24;
+            --shadow-card: 0 4px 20px -2px rgba(66, 184, 131, 0.1);
+            --radius: 16px;
         }
 
-        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
         
         body { 
             background-color: var(--bg-body); 
             color: var(--text-main); 
-            margin: 0; 
-            padding: 20px; 
+            margin: 0; padding: 20px; 
             min-height: 100vh;
         }
 
-        .container { 
-            max-width: 950px; 
-            margin: 0 auto; 
-            padding-bottom: 50px;
-        }
+        .container { max-width: 900px; margin: 0 auto; padding-bottom: 80px; }
 
-        /* --- HEADER & TYPOGRAPHY --- */
-        header { 
-            text-align: center; 
-            margin-bottom: 40px; 
-            margin-top: 20px;
-        }
-        h1 { 
-            color: var(--primary-dark); 
-            margin: 0; 
-            font-size: 2rem; 
-            letter-spacing: -0.5px;
-        }
-        p.subtitle { color: var(--text-muted); font-size: 0.95rem; margin-top: 5px; }
+        /* --- HEADER & STATS --- */
+        header { text-align: center; margin-bottom: 30px; }
+        h1 { color: var(--primary-dark); font-size: 1.8rem; margin: 0; letter-spacing: -0.5px; }
+        p.subtitle { color: var(--text-muted); font-size: 0.9rem; margin-top: 5px; }
 
-        /* --- CARD COMPONENT --- */
+        /* Stats Grid */
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px;
+        }
+        .stat-card {
+            background: var(--white); padding: 15px; border-radius: var(--radius);
+            box-shadow: var(--shadow-card); text-align: center;
+        }
+        .stat-val { font-size: 1.5rem; font-weight: 700; color: var(--primary); display: block; }
+        .stat-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* --- SEARCH BAR --- */
+        .search-container {
+            position: relative; margin-bottom: 20px;
+        }
+        .search-icon {
+            position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+            color: var(--text-muted); font-size: 1.2rem;
+        }
+        .search-input {
+            width: 100%; padding: 15px 15px 15px 45px;
+            border: none; border-radius: var(--radius);
+            background: var(--white); box-shadow: var(--shadow-card);
+            font-size: 1rem; color: var(--text-main); outline: none; transition: 0.3s;
+        }
+        .search-input:focus { box-shadow: 0 0 0 3px var(--primary-light); }
+
+        /* --- CARD & TABLE SYSTEM --- */
         .card {
-            background: var(--white);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-lg);
-            padding: 30px;
-            margin-bottom: 25px;
-            border: 1px solid #eef2f6;
-            animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            background: var(--white); border-radius: var(--radius);
+            box-shadow: var(--shadow-card); padding: 25px; margin-bottom: 20px;
+            animation: slideUp 0.4s ease;
         }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- TABLE DASHBOARD (ADVANCE STYLE) --- */
-        .table-responsive { overflow-x: auto; border-radius: 12px; }
-        table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        /* Table Styling */
+        .table-container { width: 100%; overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
         
         thead th { 
-            text-align: left; 
-            padding: 15px 20px; 
-            color: var(--text-muted); 
-            font-size: 0.8rem; 
-            text-transform: uppercase; 
-            letter-spacing: 1px;
+            text-align: left; padding: 15px; color: var(--text-muted); 
+            font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;
             border-bottom: 2px solid var(--bg-body);
         }
-        
-        tbody td { 
-            padding: 18px 20px; 
-            border-bottom: 1px solid #f1f5f9; 
-            vertical-align: middle;
-            color: var(--text-main);
-            font-weight: 500;
-        }
-        
+        tbody td { padding: 15px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
         tbody tr:last-child td { border-bottom: none; }
-        tbody tr:hover { background-color: #f8fafc; transition: 0.2s; }
 
         .badge-bab {
-            background: var(--primary-light);
-            color: var(--primary-dark);
-            padding: 6px 12px;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: 700;
+            background: var(--primary-light); color: var(--primary-dark);
+            padding: 5px 10px; border-radius: 8px; font-weight: 600; font-size: 0.85rem;
         }
 
-        /* --- BUTTONS --- */
-        .btn-group { display: flex; gap: 10px; }
+        /* Action Buttons */
+        .btn-group { display: flex; gap: 8px; }
         button {
-            padding: 10px 20px;
-            border-radius: 12px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+            padding: 8px 16px; border-radius: 10px; border: none; cursor: pointer;
+            font-weight: 600; font-size: 0.85rem; transition: 0.2s;
+            display: inline-flex; align-items: center; justify-content: center; gap: 5px;
         }
+        button:active { transform: scale(0.95); }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 2px 5px rgba(66, 184, 131, 0.3); }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-remed { background: #fffbeb; color: #d97706; border: 1px solid #fcd34d; }
+        .btn-remed:disabled { background: #f1f5f9; color: #cbd5e1; border-color: transparent; }
+        .btn-outline { background: transparent; border: 1.5px solid var(--primary); color: var(--primary); }
+
+        /* --- MOBILE RESPONSIVE (CARD VIEW) --- */
+        @media screen and (max-width: 768px) {
+            /* Sembunyikan Header Tabel Desktop */
+            thead { display: none; }
+            
+            /* Ubah Baris jadi Kartu */
+            tbody tr {
+                display: block; margin-bottom: 15px;
+                background: #fff; border: 1px solid #f1f5f9;
+                border-radius: 12px; padding: 15px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            }
+            tbody td {
+                display: flex; justify-content: space-between; align-items: center;
+                padding: 8px 0; border-bottom: 1px dashed #f1f5f9;
+                text-align: right;
+            }
+            tbody td:last-child { border-bottom: none; padding-top: 15px; justify-content: flex-end; }
+            
+            /* Label Pseudo-Element (Data Label) */
+            tbody td::before {
+                content: attr(data-label);
+                font-size: 0.8rem; font-weight: 600; color: var(--text-muted);
+                text-transform: uppercase; margin-right: 15px;
+            }
+            
+            /* Stats Grid jadi 1 baris scrollable atau stack */
+            .stats-grid { gap: 10px; }
+            .stat-val { font-size: 1.2rem; }
+        }
+
+        /* --- UTILS --- */
+        .hidden { display: none !important; }
+        .loading { text-align: center; padding: 40px; color: var(--primary); }
+        .empty-state { text-align: center; padding: 30px; color: var(--text-muted); }
         
-        button:active { transform: scale(0.96); }
-
-        .btn-primary { 
-            background: var(--primary); 
-            color: white; 
-            box-shadow: 0 4px 6px rgba(66, 184, 131, 0.3);
-        }
-        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
-
-        .btn-remed { 
-            background: #fff; 
-            border: 2px solid var(--warning); 
-            color: #d97706; 
-        }
-        .btn-remed:hover:not(:disabled) { background: #fffbeb; }
-        .btn-remed:disabled { 
-            border-color: #e2e8f0; 
-            color: #cbd5e1; 
-            cursor: not-allowed; 
-            background: transparent;
-        }
-
-        .btn-outline { 
-            background: transparent; 
-            border: 2px solid var(--primary); 
-            color: var(--primary); 
-        }
-        .btn-outline:hover { background: var(--primary-light); }
-
-        /* --- QUIZ UI --- */
-        .quiz-header { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding-bottom: 15px; border-bottom: 2px solid #f1f5f9; margin-bottom: 20px;
-        }
-        #timer { 
-            background: #fef2f2; color: var(--danger); 
-            padding: 6px 15px; border-radius: 50px; font-weight: 700; 
-        }
-
-        .progress-wrapper { height: 8px; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin-bottom: 30px; }
-        #progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), #6ee7b7); width: 0%; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-
-        .soal-text { font-size: 1.15rem; line-height: 1.7; margin-bottom: 25px; font-weight: 500; }
+        /* Quiz UI Elements (Keep from previous) */
+        #view-quiz .card { padding: 20px; }
+        .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        #timer { background: #fee2e2; color: #ef4444; padding: 5px 12px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; }
+        .soal-text { font-size: 1.1rem; line-height: 1.6; margin-bottom: 20px; }
         
         .opsi-item {
-            display: flex; align-items: center; gap: 15px;
-            padding: 16px 20px;
-            margin-bottom: 12px;
-            border: 2px solid #f1f5f9;
-            border-radius: 16px;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: white;
+            padding: 14px; margin-bottom: 10px; border: 2px solid #f1f5f9; border-radius: 12px;
+            cursor: pointer; display: flex; gap: 12px; align-items: center; transition: 0.2s;
         }
-        .opsi-item:hover { border-color: var(--primary); background: var(--bg-body); }
-        .opsi-item.active { border-color: var(--primary); background: var(--primary-light); color: var(--primary-dark); font-weight: 600; }
+        .opsi-item.active { border-color: var(--primary); background: var(--primary-light); }
+        .opsi-item.benar { background: #dcfce7 !important; border-color: var(--primary) !important; }
+        .opsi-item.salah { background: #fee2e2 !important; border-color: var(--danger) !important; }
         
-        /* Review Colors */
-        .opsi-item.benar { background: #dcfce7 !important; border-color: var(--primary) !important; color: #166534; }
-        .opsi-item.salah { background: #fee2e2 !important; border-color: var(--danger) !important; color: #991b1b; }
-
-        /* --- TOGGLE SWITCH (Pastel Style) --- */
-        .review-control { display: flex; justify-content: flex-end; align-items: center; margin-bottom: 15px; }
-        .switch { position: relative; display: inline-block; width: 46px; height: 26px; margin-left: 10px; }
+        /* Toggle */
+        .switch { position: relative; display: inline-block; width: 42px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        input:checked + .slider { background-color: var(--danger); } /* Merah utk Ulang */
-        input:checked + .slider:before { transform: translateX(20px); }
-
-        /* --- RESULT SCREEN --- */
-        .score-box {
-            width: 140px; height: 140px;
-            background: linear-gradient(135deg, var(--primary), #34d399);
-            color: white;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 3rem; font-weight: 800;
-            margin: 0 auto 20px;
-            box-shadow: 0 10px 25px rgba(66, 184, 131, 0.4);
-        }
-
-        .hidden { display: none !important; }
-        .loading { color: var(--primary); font-weight: 600; text-align: center; padding: 40px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--danger); }
+        input:checked + .slider:before { transform: translateX(18px); }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>Smart Exam Dashboard</h1>
-        <p class="subtitle">Latihan Ujian & Remedial System</p>
+        <h1>Exam Dashboard</h1>
+        <p class="subtitle">Platform Latihan Ujian & Remedial</p>
     </header>
 
-    <div id="view-dashboard" class="card">
-        <div id="loading" class="loading">Memuat data bank soal...</div>
+    <div id="view-dashboard">
         
-        <div id="dashboard-content" class="table-responsive hidden">
-            <table>
-                <thead>
-                    <tr>
-                        <th width="10%">ID Bab</th>
-                        <th width="35%">Topik Bahasan</th>
-                        <th width="15%">Skor Akhir</th>
-                        <th width="20%">Waktu Tes</th>
-                        <th width="20%">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body">
-                    </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div id="view-quiz" class="card hidden">
-        <div class="quiz-header">
-            <div>
-                <h3 id="quiz-title" style="margin:0; color:var(--primary-dark)">Bab Title</h3>
-                <span id="quiz-subtitle" style="font-size:0.85rem; color:var(--text-muted)">Mode Ujian</span>
+        <div class="stats-grid hidden" id="stats-panel">
+            <div class="stat-card">
+                <span class="stat-val" id="stat-total">0</span>
+                <span class="stat-label">Total Bab</span>
             </div>
-            <div id="timer">00:00</div>
+            <div class="stat-card">
+                <span class="stat-val" id="stat-avg">0</span>
+                <span class="stat-label">Avg Skor</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-val" id="stat-done">0</span>
+                <span class="stat-label">Selesai</span>
+            </div>
         </div>
 
-        <div class="progress-wrapper">
-            <div id="progress-bar"></div>
+        <div class="search-container hidden" id="search-panel">
+            <i class="ph ph-magnifying-glass search-icon"></i>
+            <input type="text" id="search-input" class="search-input" placeholder="Cari Bab atau Topik..." onkeyup="filterDashboard()">
         </div>
 
-        <div id="review-panel" class="review-control hidden">
-            <span style="font-size:0.9rem; font-weight:600; color:var(--text-muted);">Tandai Remedial (Ulang)</span>
-            <label class="switch">
-                <input type="checkbox" id="toggle-remedial" onchange="toggleRemedial(this)">
-                <span class="slider round"></span>
-            </label>
-        </div>
-
-        <div id="soal-container">
-            <div id="soal-text" class="soal-text"></div>
-            <div id="opsi-list"></div>
-        </div>
-
-        <div style="margin-top: 40px; display: flex; justify-content: space-between;">
-            <button class="btn-outline" onclick="nav(-1)" id="btn-prev">← Sebelumnya</button>
-            <button class="btn-outline" onclick="nav(1)" id="btn-next">Selanjutnya →</button>
-        </div>
-        
-        <div style="margin-top: 30px;">
-            <button class="btn-primary" style="width:100%; padding: 15px;" onclick="finishExam()" id="btn-finish">Selesai & Simpan Nilai</button>
-            <button class="btn-outline" style="width:100%; padding: 15px; display:none;" onclick="location.reload()" id="btn-home">Kembali ke Dashboard</button>
+        <div class="card">
+            <div id="loading" class="loading">
+                <i class="ph ph-spinner ph-spin" style="font-size: 2rem;"></i><br>
+                Sedang memuat data...
+            </div>
+            
+            <div id="dashboard-content" class="table-container hidden">
+                <table id="main-table">
+                    <thead>
+                        <tr>
+                            <th width="15%">ID Bab</th>
+                            <th width="35%">Topik</th>
+                            <th width="15%">Skor</th>
+                            <th width="20%">Terakhir</th>
+                            <th width="15%">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        </tbody>
+                </table>
+                <div id="empty-msg" class="empty-state hidden">
+                    <i class="ph ph-smiley-sad" style="font-size: 2rem;"></i>
+                    <p>Tidak ditemukan bab dengan kata kunci tersebut.</p>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div id="view-result" class="card hidden" style="text-align: center; padding: 50px 30px;">
-        <h2 style="margin-bottom: 30px; color: var(--text-main);">Hasil Ujian</h2>
-        <div class="score-box" id="result-score">0</div>
-        <p id="result-msg" style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 30px;"></p>
+    <div id="view-quiz" class="hidden">
+        <div class="card">
+            <div class="quiz-header">
+                <div>
+                    <h3 id="quiz-title" style="margin:0; font-size:1.1rem; color:var(--primary-dark)">Bab Title</h3>
+                    <span id="quiz-subtitle" style="font-size:0.8rem; color:var(--text-muted)">Mode Ujian</span>
+                </div>
+                <div id="timer">00:00</div>
+            </div>
+
+            <div style="height:6px; background:#f1f5f9; border-radius:10px; margin-bottom:20px; overflow:hidden;">
+                <div id="progress-bar" style="height:100%; background:var(--primary); width:0%; transition:0.3s;"></div>
+            </div>
+
+            <div id="review-panel" class="hidden" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background:#fff1f2; padding:10px; border-radius:10px;">
+                <span style="font-size:0.8rem; font-weight:600; color:#9f1239;">Tandai Remedial</span>
+                <label class="switch">
+                    <input type="checkbox" id="toggle-remedial" onchange="toggleRemedial(this)">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <div id="soal-container">
+                <div id="soal-text" class="soal-text"></div>
+                <div id="opsi-list"></div>
+            </div>
+
+            <div style="margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <button class="btn-outline" onclick="nav(-1)" id="btn-prev"><i class="ph ph-caret-left"></i> Prev</button>
+                <button class="btn-outline" onclick="nav(1)" id="btn-next">Next <i class="ph ph-caret-right"></i></button>
+            </div>
+            
+            <button class="btn-primary" style="width:100%; margin-top: 20px; padding: 12px;" onclick="finishExam()" id="btn-finish">Selesai & Simpan</button>
+            <button class="btn-outline" style="width:100%; margin-top: 20px; display:none;" onclick="location.reload()" id="btn-home">Kembali ke Dashboard</button>
+        </div>
+    </div>
+
+    <div id="view-result" class="card hidden" style="text-align: center; padding: 40px 20px;">
+        <div style="width:100px; height:100px; background:var(--primary-light); color:var(--primary-dark); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2.5rem; font-weight:700; margin:0 auto 20px;">
+            <span id="result-score">0</span>
+        </div>
+        <h2 style="margin:0; color:var(--text-main);">Ujian Selesai!</h2>
+        <p id="result-msg" style="color:var(--text-muted); margin-bottom:30px;"></p>
         
-        <div style="display: flex; justify-content: center; gap: 15px;">
-            <button class="btn-primary" onclick="location.reload()">Menu Utama</button>
+        <div style="display: grid; gap: 10px;">
+            <button class="btn-primary" onclick="location.reload()">Ke Menu Utama</button>
             <button class="btn-outline" onclick="enterReviewMode()">Review Jawaban</button>
         </div>
     </div>
 </div>
 
 <script>
-// ==========================================
-// KONFIGURASI API (GANTI URL INI)
-// ==========================================
+// --- CONFIGURATION ---
 const API_URL = "https://script.google.com/macros/s/AKfycbxGeMMPL_N0zPBYdF8SawZa66-0tkCTexXzmnLrjJrXMYBzTIooVNz25MTyLVwN3XB_nQ/exec"; 
 
-// ==========================================
-// STATE MANAGEMENT
-// ==========================================
+// --- STATE ---
 let allData = [];
 let activeData = [];
 let currentIndex = 0;
@@ -302,35 +288,31 @@ let currentBabID = "";
 let timerInterval;
 let secondsElapsed = 0;
 
-// ==========================================
-// INITIALIZATION
-// ==========================================
-document.addEventListener("DOMContentLoaded", initApp);
-
-function initApp() {
+// --- INIT ---
+document.addEventListener("DOMContentLoaded", () => {
     fetch(API_URL)
         .then(res => res.json())
         .then(data => {
             allData = data;
             renderDashboard();
+            calculateStats();
         })
         .catch(err => {
-            document.getElementById("loading").innerText = "Gagal memuat data. Cek koneksi.";
-            console.error(err);
+            document.getElementById("loading").innerHTML = "<span style='color:red'>Gagal koneksi server. Refresh halaman.</span>";
         });
-}
+});
 
-// ==========================================
-// DASHBOARD LOGIC
-// ==========================================
+// --- DASHBOARD FUNCTIONS ---
 function renderDashboard() {
     document.getElementById("loading").classList.add("hidden");
     document.getElementById("dashboard-content").classList.remove("hidden");
-    
+    document.getElementById("search-panel").classList.remove("hidden");
+    document.getElementById("stats-panel").classList.remove("hidden"); // Menampilkan Panel Stats
+    document.getElementById("stats-panel").style.display = "grid"; // Fix display grid
+
     const tbody = document.getElementById("table-body");
     tbody.innerHTML = "";
 
-    // Grouping Data
     const groups = {};
     allData.forEach(item => {
         if (!groups[item.bab]) {
@@ -339,43 +321,39 @@ function renderDashboard() {
                 name: item.namaBab || "Tanpa Judul",
                 lastScore: item.lastScore,
                 lastTest: item.lastTest,
-                totalSoal: 0,
                 remedialCount: 0
             };
         }
-        groups[item.bab].totalSoal++;
         if (item.note === "ULANG") groups[item.bab].remedialCount++;
     });
 
     Object.values(groups).forEach(g => {
         const tr = document.createElement("tr");
+        tr.className = "dashboard-row"; // Class untuk target search
         
-        // Format Tanggal
         let dateStr = "-";
         if(g.lastTest) {
             const d = new Date(g.lastTest);
-            if(!isNaN(d)) dateStr = d.toLocaleDateString('id-ID', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
+            if(!isNaN(d)) dateStr = d.toLocaleDateString('id-ID', {day:'numeric', month:'short'});
         }
 
-        // Logic Warna Score
         let scoreDisplay = `<span style="color:#cbd5e1">-</span>`;
         if(g.lastScore !== "") {
             const color = g.lastScore >= 75 ? 'var(--primary)' : 'var(--danger)';
-            scoreDisplay = `<span style="font-weight:700; font-size:1.1rem; color:${color}">${g.lastScore}</span>`;
+            scoreDisplay = `<span style="font-weight:700; color:${color}">${g.lastScore}</span>`;
         }
 
-        const isRemedDisabled = g.remedialCount === 0;
-
+        // data-label attribute digunakan untuk Tampilan Mobile (Card View)
         tr.innerHTML = `
-            <td><span class="badge-bab">${g.id}</span></td>
-            <td>${g.name}</td>
-            <td>${scoreDisplay}</td>
-            <td style="font-size:0.85rem; color:var(--text-muted)">${dateStr}</td>
-            <td>
+            <td data-label="Bab"><span class="badge-bab">${g.id}</span></td>
+            <td data-label="Topik" class="topic-text" style="font-weight:500">${g.name}</td>
+            <td data-label="Skor">${scoreDisplay}</td>
+            <td data-label="Waktu">${dateStr}</td>
+            <td data-label="Aksi">
                 <div class="btn-group">
                     <button class="btn-primary" onclick="startQuiz('${g.id}', 'full')">Mulai</button>
-                    <button class="btn-remed" ${isRemedDisabled ? 'disabled' : ''} onclick="startQuiz('${g.id}', 'remed')">
-                        Ulang (${g.remedialCount})
+                    <button class="btn-remed" ${g.remedialCount === 0 ? 'disabled' : ''} onclick="startQuiz('${g.id}', 'remed')">
+                        <i class="ph ph-warning-circle"></i> ${g.remedialCount}
                     </button>
                 </div>
             </td>
@@ -384,35 +362,91 @@ function renderDashboard() {
     });
 }
 
-// ==========================================
-// QUIZ ENGINE
-// ==========================================
+// --- NEW FEATURES ---
+
+// 1. SEARCH FUNCTION
+function filterDashboard() {
+    const input = document.getElementById("search-input").value.toLowerCase();
+    const rows = document.querySelectorAll(".dashboard-row");
+    let hasResult = false;
+
+    rows.forEach(row => {
+        const babText = row.querySelector(".badge-bab").innerText.toLowerCase();
+        const topicText = row.querySelector(".topic-text").innerText.toLowerCase();
+
+        if (babText.includes(input) || topicText.includes(input)) {
+            row.style.display = ""; // Show default (table-row or block)
+            hasResult = true;
+        } else {
+            row.style.display = "none";
+        }
+    });
+
+    // Show empty state if no result
+    const emptyMsg = document.getElementById("empty-msg");
+    const tableEl = document.getElementById("main-table");
+    
+    if (hasResult) {
+        emptyMsg.classList.add("hidden");
+        tableEl.classList.remove("hidden");
+    } else {
+        emptyMsg.classList.remove("hidden");
+        tableEl.classList.add("hidden");
+    }
+}
+
+// 2. STATS CALCULATION
+function calculateStats() {
+    const groups = {};
+    allData.forEach(item => {
+        if (!groups[item.bab]) {
+            groups[item.bab] = { score: item.lastScore };
+        }
+    });
+
+    const totalBab = Object.keys(groups).length;
+    let totalScore = 0;
+    let finishedCount = 0;
+    let babWithScore = 0;
+
+    Object.values(groups).forEach(g => {
+        if(g.score !== "") {
+            totalScore += parseInt(g.score);
+            babWithScore++;
+            finishedCount++;
+        }
+    });
+
+    const avgScore = babWithScore > 0 ? Math.round(totalScore / babWithScore) : 0;
+
+    document.getElementById("stat-total").innerText = totalBab;
+    document.getElementById("stat-avg").innerText = avgScore;
+    document.getElementById("stat-done").innerText = finishedCount;
+}
+
+// --- QUIZ LOGIC (Standard) ---
 function startQuiz(babID, mode) {
     currentBabID = babID;
     isReviewMode = false;
     userAnswers = {};
     secondsElapsed = 0;
     
-    // Filter Data
     let questions = allData.filter(x => x.bab == babID);
-    if(mode === 'remed') {
-        questions = questions.filter(x => x.note === "ULANG");
-    }
+    if(mode === 'remed') questions = questions.filter(x => x.note === "ULANG");
+    
     questions.sort((a,b) => a.nomor - b.nomor);
     activeData = questions;
     currentIndex = 0;
 
-    // Switch View
     document.getElementById("view-dashboard").classList.add("hidden");
     document.getElementById("view-quiz").classList.remove("hidden");
     document.getElementById("view-result").classList.add("hidden");
-
-    // UI Reset
+    
     document.getElementById("quiz-title").innerText = `Bab ${babID}`;
-    document.getElementById("quiz-subtitle").innerText = mode === 'full' ? 'Mode Ujian Lengkap' : 'Mode Remedial';
-    document.getElementById("btn-finish").style.display = 'block';
-    document.getElementById("btn-home").style.display = 'none';
-    document.getElementById("review-panel").classList.add("hidden");
+    document.getElementById("quiz-subtitle").innerText = mode === 'full' ? 'Latihan Penuh' : 'Remedial';
+    document.getElementById("btn-finish").style.display = "block";
+    document.getElementById("btn-home").style.display = "none";
+    document.getElementById("review-panel").style.display = "none"; // Hide first
 
     runTimer();
     renderQuestion();
@@ -420,48 +454,41 @@ function startQuiz(babID, mode) {
 
 function renderQuestion() {
     const q = activeData[currentIndex];
-    const elSoal = document.getElementById("soal-text");
-    const elOpsi = document.getElementById("opsi-list");
     
-    // Update Progress
+    // Progress
     const pct = ((currentIndex + 1) / activeData.length) * 100;
     document.getElementById("progress-bar").style.width = pct + "%";
 
-    elSoal.innerHTML = `<strong>${q.nomor}.</strong> ${q.soal}`;
+    document.getElementById("soal-text").innerHTML = `<strong>${q.nomor}.</strong> ${q.soal}`;
 
-    // Review Logic (Toggle)
     if(isReviewMode) {
-        document.getElementById("review-panel").classList.remove("hidden");
+        const panel = document.getElementById("review-panel");
+        panel.style.display = "flex";
+        panel.classList.remove("hidden");
+        
         const toggle = document.getElementById("toggle-remedial");
-        // Cek status terbaru dari local memory (allData)
-        const freshStatus = allData.find(x => x.bab == q.bab && x.nomor == q.nomor).note;
-        toggle.checked = (freshStatus === "ULANG");
+        // Get fresh status
+        const item = allData.find(x => x.bab == q.bab && x.nomor == q.nomor);
+        toggle.checked = (item.note === "ULANG");
         toggle.dataset.bab = q.bab;
         toggle.dataset.nomor = q.nomor;
     }
 
-    // Render Options
     let html = "";
     Object.keys(q.opsi).forEach(k => {
         let cls = "opsi-item";
-        
-        // State Active (User Selection)
         if(userAnswers[q.nomor] === k) cls += " active";
-
-        // State Review (Benar/Salah)
         if(isReviewMode) {
             if(k === q.jawaban) cls += " benar";
             else if(userAnswers[q.nomor] === k) cls += " salah";
         }
-
         html += `<div class="${cls}" onclick="selectAnswer('${k}')">
-                    <div style="width:30px; height:30px; background:#f1f5f9; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--text-muted)">${k}</div>
-                    <div>${q.opsi[k]}</div>
+                    <div style="width:24px; height:24px; background:#e2e8f0; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700;">${k}</div>
+                    <div style="font-size:0.95rem;">${q.opsi[k]}</div>
                  </div>`;
     });
-    elOpsi.innerHTML = html;
+    document.getElementById("opsi-list").innerHTML = html;
 
-    // Buttons State
     document.getElementById("btn-prev").disabled = (currentIndex === 0);
     document.getElementById("btn-next").disabled = (currentIndex === activeData.length - 1);
 }
@@ -477,9 +504,6 @@ function nav(step) {
     renderQuestion();
 }
 
-// ==========================================
-// TIMER & SCORING
-// ==========================================
 function runTimer() {
     clearInterval(timerInterval);
     const el = document.getElementById("timer");
@@ -494,9 +518,8 @@ function runTimer() {
 function finishExam() {
     const answered = Object.keys(userAnswers).length;
     if(answered < activeData.length) {
-        if(!confirm(`Baru ${answered} dari ${activeData.length} soal terisi. Selesaikan?`)) return;
+        if(!confirm(`Masih ada soal kosong (${answered}/${activeData.length}). Selesaikan?`)) return;
     }
-    
     clearInterval(timerInterval);
 
     let correct = 0;
@@ -504,23 +527,19 @@ function finishExam() {
         if(userAnswers[q.nomor] === q.jawaban) correct++;
     });
 
-    const finalScore = Math.round((correct / activeData.length) * 100);
-    const timeString = new Date().toLocaleString("en-US", {timeZone: "Asia/Jakarta"}); // Format ISO String utk GAS
-
-    // UI Result
+    const score = Math.round((correct / activeData.length) * 100);
+    
     document.getElementById("view-quiz").classList.add("hidden");
     document.getElementById("view-result").classList.remove("hidden");
-    
-    const scoreEl = document.getElementById("result-score");
-    scoreEl.innerText = finalScore;
-    document.getElementById("result-msg").innerText = `Benar ${correct} dari ${activeData.length} soal.`;
+    document.getElementById("result-score").innerText = score;
+    document.getElementById("result-msg").innerText = `Kamu menjawab ${correct} benar dari ${activeData.length} soal.`;
 
-    // Save Data
-    saveData(currentBabID, finalScore, new Date());
+    // Save
+    const now = new Date();
+    saveData(currentBabID, score, now.toISOString());
 }
 
-function saveData(bab, score, dateObj) {
-    console.log("Saving...");
+function saveData(bab, score, dateIso) {
     fetch(API_URL, {
         method: "POST",
         mode: "no-cors",
@@ -529,24 +548,18 @@ function saveData(bab, score, dateObj) {
             action: "saveScore",
             bab: bab,
             score: score,
-            tanggal: dateObj.toISOString() // Kirim ISO string
+            tanggal: dateIso
         })
-    }).then(() => console.log("Saved.")).catch(e => console.error(e));
+    }).then(() => console.log("Saved"));
 }
 
-// ==========================================
-// REVIEW & REMEDIAL HANDLING
-// ==========================================
 function enterReviewMode() {
     isReviewMode = true;
     currentIndex = 0;
-    
     document.getElementById("view-result").classList.add("hidden");
     document.getElementById("view-quiz").classList.remove("hidden");
-    
-    document.getElementById("btn-finish").style.display = 'none';
-    document.getElementById("btn-home").style.display = 'block';
-    
+    document.getElementById("btn-finish").style.display = "none";
+    document.getElementById("btn-home").style.display = "block";
     renderQuestion();
 }
 
@@ -555,23 +568,15 @@ function toggleRemedial(el) {
     const nomor = el.dataset.nomor;
     const action = el.checked ? "tandai" : "hapus";
 
-    // 1. Update Local Memory (biar UI sync tanpa reload)
+    // Update Local
     const item = allData.find(x => x.bab == bab && x.nomor == nomor);
     if(item) item.note = el.checked ? "ULANG" : "";
 
-    // 2. Send to Backend
     fetch(API_URL, {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            action: action,
-            bab: bab,
-            nomor: nomor
-        })
-    }).catch(err => {
-        alert("Gagal menyimpan status remedial.");
-        el.checked = !el.checked; // Revert
+        body: JSON.stringify({ action: action, bab: bab, nomor: nomor })
     });
 }
 </script>
