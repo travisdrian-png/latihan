@@ -3,403 +3,445 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Latihan Ujian Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Dashboard Ujian Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #4f46e5;
-            --primary-hover: #4338ca;
+            --primary-dark: #4338ca;
             --success: #10b981;
             --danger: #ef4444;
-            --bg: #f8fafc;
+            --warning: #f59e0b;
+            --bg: #f1f5f9;
+            --card-bg: #ffffff;
             --text: #1e293b;
+            --border: #e2e8f0;
         }
 
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; }
         
-        .container { max-width: 700px; margin: 0 auto; }
+        .container { max-width: 900px; margin: 0 auto; }
 
-        /* Card Style */
+        /* HEADER */
+        header { text-align: center; margin-bottom: 30px; }
+        h1 { color: var(--primary); margin: 0; font-size: 1.8rem; }
+        p { color: #64748b; margin-top: 5px; }
+
+        /* CARD STYLE */
         .card {
-            background: white;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
-        }
-
-        h2 { margin-top: 0; color: var(--primary); text-align: center; }
-
-        /* Input & Button Setup */
-        .setup-zone { display: flex; flex-direction: column; gap: 15px; align-items: center; }
-        .setup-row { display: flex; gap: 10px; width: 100%; justify-content: center; }
-        select {
-            padding: 10px 15px;
-            border-radius: 8px;
-            border: 1px solid #cbd5e1;
-            flex-grow: 1;
-            max-width: 300px;
-        }
-
-        /* Checkbox Filter UI */
-        .filter-box {
-            display: flex; align-items: center; gap: 10px;
-            background: #eef2ff; padding: 10px 20px; border-radius: 8px;
-            border: 1px solid #c7d2fe; width: 100%; max-width: 300px;
-        }
-        .filter-box input { width: 18px; height: 18px; cursor: pointer; }
-
-        button {
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.2s;
-            background: var(--primary);
-            color: white;
-        }
-        button:hover { background: var(--primary-hover); transform: translateY(-1px); }
-        button:disabled { background: #cbd5e1; cursor: not-allowed; }
-        
-        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
-        .btn-outline:hover { background: #eef2ff; }
-
-        /* Progress Bar */
-        .progress-container {
-            height: 8px;
-            background: #e2e8f0;
-            border-radius: 4px;
-            margin: 20px 0;
-            overflow: hidden;
-        }
-        #progress-bar {
-            height: 100%;
-            background: var(--primary);
-            width: 0%;
-            transition: width 0.4s ease;
-        }
-
-        /* Question & Options */
-        #soal-container { min-height: 200px; animation: fadeIn 0.5s; position: relative; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .opsi {
-            border: 2px solid #e2e8f0;
-            padding: 15px 20px;
-            margin: 10px 0;
+            background: var(--card-bg);
             border-radius: 12px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            font-weight: 500;
-            transition: 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            padding: 20px;
+            overflow: hidden;
+            animation: fadeIn 0.4s ease;
+        }
+
+        /* TABLE STYLE (DASHBOARD) */
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th { text-align: left; padding: 12px 16px; background: #f8fafc; color: #64748b; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); }
+        td { padding: 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f8fafc; }
+
+        .bab-badge { 
+            background: #e0e7ff; color: var(--primary); 
+            padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.85rem; 
+        }
+        .score-badge { font-weight: 700; color: #0f172a; }
+        
+        /* ACTION BUTTONS IN TABLE */
+        .btn-group { display: flex; gap: 8px; }
+        .btn-action {
+            padding: 8px 12px; border-radius: 6px; border: none; 
+            font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .btn-start { background: var(--primary); color: white; }
+        .btn-start:hover { background: var(--primary-dark); }
+        
+        .btn-remed { background: var(--warning); color: #fff; }
+        .btn-remed:hover { background: #d97706; }
+        .btn-remed:disabled { background: #e2e8f0; color: #94a3b8; cursor: not-allowed; opacity: 0.7; }
+
+        /* QUIZ ZONE UI (REUSED) */
+        .progress-container { height: 6px; background: #e2e8f0; border-radius: 4px; margin: 20px 0; overflow: hidden; }
+        #progress-bar { height: 100%; background: var(--primary); width: 0%; transition: width 0.3s ease; }
+        
+        .opsi {
+            border: 2px solid var(--border); padding: 15px; margin: 10px 0; border-radius: 10px;
+            cursor: pointer; display: flex; align-items: center; transition: 0.2s;
         }
         .opsi:hover { border-color: var(--primary); background: #f5f3ff; }
-        .opsi.active { border-color: var(--primary); background: #eef2ff; box-shadow: 0 0 0 1px var(--primary); }
-        
-        /* State Benar/Salah */
-        .opsi.benar { background: #dcfce7 !important; border-color: var(--success) !important; color: #166534; }
-        .opsi.salah { background: #fee2e2 !important; border-color: var(--danger) !important; color: #991b1b; }
+        .opsi.active { border-color: var(--primary); background: #eef2ff; }
+        .opsi.benar { background: #dcfce7 !important; border-color: var(--success) !important; }
+        .opsi.salah { background: #fee2e2 !important; border-color: var(--danger) !important; }
 
-        .nav-buttons { display: flex; justify-content: space-between; margin-top: 30px; }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 25px; }
+        button { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
         
-        #timer { text-align: center; font-weight: bold; font-size: 1.2rem; margin-bottom: 10px; color: var(--danger); }
-        
-        .status-text { text-align: center; font-size: 0.9rem; color: #64748b; margin-top: 10px; }
-
-        /* Result Overlay */
-        #result-screen { text-align: center; display: none; }
-        .score-circle {
-            width: 120px; height: 120px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: white;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 2rem; font-weight: bold;
-            margin: 20px auto;
-        }
-
-        /* --- TOGGLE SWITCH CSS --- */
-        .review-tools {
-            display: flex; justify-content: flex-end; align-items: center;
-            margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #eee;
-        }
-        .toggle-label { font-size: 0.9rem; margin-right: 10px; font-weight: 600; color: #64748b; }
-        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        /* TOGGLE SWITCH */
+        .review-tools { display: flex; justify-content: flex-end; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .switch { position: relative; display: inline-block; width: 40px; height: 24px; margin-left: 10px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute; cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #ccc; transition: .4s; border-radius: 34px;
-        }
-        .slider:before {
-            position: absolute; content: "";
-            height: 20px; width: 20px;
-            left: 3px; bottom: 3px;
-            background-color: white; transition: .4s; border-radius: 50%;
-        }
-        input:checked + .slider { background-color: #ef4444; } /* Merah utk Ulang */
-        input:checked + .slider:before { transform: translateX(24px); }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--danger); }
+        input:checked + .slider:before { transform: translateX(16px); }
+
+        /* UTILS */
+        .hidden { display: none !important; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Result Screen */
+        .result-circle { width: 100px; height: 100px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold; margin: 0 auto 20px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="card" id="setup-card">
-        <h2>Latihan Ujian</h2>
-        <div class="setup-zone">
-            <div class="setup-row">
-                <select id="bab">
-                    <option value="">Loading data...</option>
-                </select>
-            </div>
-            
-            <label class="filter-box">
-                <input type="checkbox" id="filter-ulang">
-                <span>Hanya Soal "ULANG"</span>
-            </label>
+    <header>
+        <h1>Sistem Ujian Pro</h1>
+        <p>Pilih Bab untuk memulai latihan atau remedial.</p>
+    </header>
 
-            <button onclick="mulai()" style="width: 100%; max-width: 300px;">Mulai Ujian</button>
+    <div id="dashboard-view" class="card">
+        <p style="text-align:center;" id="loading-text">Sedang memuat data...</p>
+        <div class="table-responsive hidden" id="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th width="10%">Bab</th>
+                        <th width="40%">Topik Bahasan</th>
+                        <th width="15%">Score Terakhir</th>
+                        <th width="35%">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    </tbody>
+            </table>
         </div>
     </div>
 
-    <div id="quiz-zone" style="display: none;">
-        <div id="timer">00:00</div>
+    <div id="quiz-view" class="card hidden">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3 id="judul-quiz" style="margin:0; color:var(--primary);">Bab 1</h3>
+            <div id="timer" style="font-weight:bold; color:var(--danger);">00:00</div>
+        </div>
+        
         <div class="progress-container">
             <div id="progress-bar"></div>
         </div>
 
-        <div class="card">
-            <div id="review-header" style="display:none;"></div>
+        <div id="review-header" class="review-tools hidden">
+            <span style="font-size:0.9rem; font-weight:600; color:#64748b;">Perlu Remedial?</span>
+            <label class="switch">
+                <input type="checkbox" id="toggle-remedial" onchange="toggleMarking(this)">
+                <span class="slider round"></span>
+            </label>
+        </div>
 
-            <div id="soal-container">
-                <div id="soal-content"></div>
-                <div id="opsi-container"></div>
-            </div>
+        <div id="soal-area">
+            <div id="soal-text" style="font-size:1.1rem; line-height:1.6; margin-bottom:20px;"></div>
+            <div id="opsi-list"></div>
+        </div>
 
-            <div class="nav-buttons">
-                <button class="btn-outline" onclick="prev()" id="btn-prev">⬅ Kembali</button>
-                <button class="btn-outline" onclick="next()" id="btn-next">Lanjut ➡</button>
-            </div>
-            <div style="margin-top: 20px; text-align: center;">
-                <button onclick="confirmSubmit()" id="btn-submit" style="background: var(--success); width: 100%;">Selesai & Kirim Jawaban</button>
-            </div>
-            <p class="status-text" id="status-posisi"></p>
+        <div class="nav-buttons">
+            <button class="btn-outline" onclick="nav(-1)" id="btn-prev">⬅ Kembali</button>
+            <button class="btn-outline" onclick="nav(1)" id="btn-next">Lanjut ➡</button>
+        </div>
+        <div style="margin-top: 20px;">
+            <button class="btn-primary" style="width:100%" onclick="finishExam()" id="btn-finish">Selesai & Simpan Nilai</button>
+            <button class="btn-outline" style="width:100%; margin-top:10px;" onclick="backToMenu()" id="btn-back-menu" class="hidden">Kembali ke Menu</button>
         </div>
     </div>
 
-    <div class="card" id="result-screen">
+    <div id="result-overlay" class="card hidden" style="text-align:center;">
         <h2>Hasil Ujian</h2>
-        <div class="score-circle" id="score-val">0</div>
-        <p id="score-desc"></p>
-        <button onclick="location.reload()">Menu Utama</button>
-        <button class="btn-outline" onclick="tutupHasil()">Review & Tandai Soal</button>
+        <div class="result-circle" id="result-score">0</div>
+        <p id="result-msg"></p>
+        <button class="btn-primary" onclick="window.location.reload()">Ke Menu Utama</button>
+        <button class="btn-outline" onclick="reviewMode()">Review Jawaban</button>
     </div>
 </div>
 
 <script>
-// UPDATE URL INI SETELAH DEPLOY BARU
-const API = "https://script.google.com/macros/s/AKfycbyV7LviWPxG8HprU9xfoHx6_qrYeRfu68Kxx1HflafOpek15HgKm_SJL8NLCaCJ9N7eXQ/exec";
+// --- KONFIGURASI ---
+const API_URL = "https://script.google.com/macros/s/AKfycbzY3FPb2StW0S2VY7l2x17kux9Nq18Cj1YHYbhdB1qhrJsm67zmaZex__wZlez4NUO1/exec";
 
-let semuaData = [], aktif = [], index = 0;
-let jawabanUser = {};
-let isFinished = false;
-let waktu = 0;
+// --- VARIABEL GLOBAL ---
+let allData = [];
+let activeQuestions = [];
+let currentIndex = 0;
+let userAnswers = {};
+let isReviewMode = false;
+let currentBab = "";
 let timerInterval;
+let seconds = 0;
 
-const babSel = document.getElementById("bab");
-const filterUlang = document.getElementById("filter-ulang");
-const quizZone = document.getElementById("quiz-zone");
-const setupCard = document.getElementById("setup-card");
-const resultScreen = document.getElementById("result-screen");
-const reviewHeader = document.getElementById("review-header");
+// --- INITIALIZATION ---
+document.addEventListener("DOMContentLoaded", () => {
+    fetchData();
+});
 
-// Fetch Data Awal
-fetch(API)
-    .then(r => r.json())
-    .then(data => {
-        semuaData = data;
-        babSel.innerHTML = '<option value="">Pilih Bab...</option>';
-        const listBab = [...new Set(data.map(x => x.bab))];
-        listBab.forEach(b => {
-            const opt = document.createElement("option");
-            opt.value = b;
-            opt.textContent = "Bab " + b;
-            babSel.appendChild(opt);
+function fetchData() {
+    fetch(API_URL)
+        .then(r => r.json())
+        .then(data => {
+            allData = data;
+            renderDashboard(data);
+        })
+        .catch(e => {
+            document.getElementById("loading-text").innerText = "Gagal mengambil data.";
+            console.error(e);
         });
-    })
-    .catch(err => alert("Gagal mengambil data. Pastikan API aktif."));
-
-function mulai() {
-    if (!babSel.value) return alert("Pilih Bab terlebih dahulu!");
-    
-    // Filter Data berdasarkan Bab
-    let filtered = semuaData.filter(x => x.bab == babSel.value);
-
-    // LOGIC FILTER TAMBAHAN: Jika checkbox dicentang, hanya ambil yg note == "ULANG"
-    if (filterUlang.checked) {
-        filtered = filtered.filter(x => x.note === "ULANG");
-        if (filtered.length === 0) {
-            return alert("Tidak ada soal bertanda 'ULANG' di bab ini!");
-        }
-    }
-    
-    aktif = filtered;
-    aktif.sort((a, b) => a.nomor - b.nomor);
-    
-    index = 0;
-    jawabanUser = {};
-    isFinished = false;
-    
-    setupCard.style.display = "none";
-    quizZone.style.display = "block";
-    reviewHeader.style.display = "none"; // Sembunyikan toggle di awal
-    document.getElementById("btn-submit").style.display = "block";
-    
-    startTimer();
-    tampil();
 }
 
+// --- DASHBOARD LOGIC ---
+function renderDashboard(data) {
+    document.getElementById("loading-text").classList.add("hidden");
+    const tableContainer = document.getElementById("table-container");
+    const tbody = document.getElementById("table-body");
+    tableContainer.classList.remove("hidden");
+    tbody.innerHTML = "";
+
+    // Grouping data by BAB
+    const grouped = {};
+    data.forEach(item => {
+        if (!grouped[item.bab]) {
+            grouped[item.bab] = {
+                bab: item.bab,
+                nama: item.namaBab || "Tanpa Nama",
+                score: item.lastScore || "-",
+                total: 0,
+                remedialCount: 0
+            };
+        }
+        grouped[item.bab].total++;
+        if (item.note === "ULANG") grouped[item.bab].remedialCount++;
+    });
+
+    // Render Rows
+    Object.values(grouped).forEach(g => {
+        const tr = document.createElement("tr");
+        
+        // Tombol Remedial (Disable jika count == 0)
+        const remedDisabled = g.remedialCount === 0;
+        const btnRemedial = `
+            <button class="btn-action btn-remed" ${remedDisabled ? "disabled" : ""} 
+                onclick="startQuiz('${g.bab}', 'remedial')">
+                Remedial (${g.remedialCount})
+            </button>`;
+
+        tr.innerHTML = `
+            <td><span class="bab-badge">${g.bab}</span></td>
+            <td style="font-weight:500">${g.nama}</td>
+            <td><span class="score-badge">${g.score}</span></td>
+            <td>
+                <div class="btn-group">
+                    <button class="btn-action btn-start" onclick="startQuiz('${g.bab}', 'full')">
+                        Mulai Ujian
+                    </button>
+                    ${btnRemedial}
+                </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// --- QUIZ LOGIC ---
+function startQuiz(bab, mode) {
+    currentBab = bab;
+    isReviewMode = false;
+    userAnswers = {};
+    seconds = 0;
+    
+    // Filter Data
+    let questions = allData.filter(x => x.bab == bab);
+    if (mode === "remedial") {
+        questions = questions.filter(x => x.note === "ULANG");
+    }
+    
+    // Sort by Number
+    questions.sort((a,b) => a.nomor - b.nomor);
+    activeQuestions = questions;
+    currentIndex = 0;
+
+    // UI Updates
+    document.getElementById("dashboard-view").classList.add("hidden");
+    document.getElementById("quiz-view").classList.remove("hidden");
+    document.getElementById("result-overlay").classList.add("hidden");
+    document.getElementById("btn-finish").style.display = "block";
+    document.getElementById("btn-back-menu").style.display = "none";
+    document.getElementById("review-header").classList.add("hidden");
+    
+    // Judul
+    const babName = questions[0]?.namaBab || "";
+    document.getElementById("judul-quiz").innerText = `Bab ${bab} - ${mode === 'remedial' ? 'Remedial' : 'Full'} (${activeQuestions.length} Soal)`;
+
+    startTimer();
+    renderQuestion();
+}
+
+function renderQuestion() {
+    const q = activeQuestions[currentIndex];
+    const soalText = document.getElementById("soal-text");
+    const opsiList = document.getElementById("opsi-list");
+    const progressBar = document.getElementById("progress-bar");
+    const posText = document.getElementById("judul-quiz"); // Update with position info if needed
+
+    // Progress Bar
+    const pct = ((currentIndex + 1) / activeQuestions.length) * 100;
+    progressBar.style.width = pct + "%";
+
+    // Content
+    soalText.innerHTML = `<strong>No. ${q.nomor}</strong><br>${q.soal}`;
+    
+    // Toggle Button (Hanya tampil di mode review)
+    if (isReviewMode) {
+        document.getElementById("review-header").classList.remove("hidden");
+        const toggle = document.getElementById("toggle-remedial");
+        // Check apakah note == ULANG
+        // Kita cek dari allData original untuk status terbaru, atau dari objek q
+        toggle.checked = (q.note === "ULANG");
+        // Simpan referensi soal aktif di toggle utk event handler
+        toggle.dataset.bab = q.bab;
+        toggle.dataset.nomor = q.nomor;
+    }
+
+    // Opsi
+    let html = "";
+    Object.keys(q.opsi).forEach(k => {
+        let cls = "opsi";
+        if (userAnswers[q.nomor] === k) cls += " active";
+        
+        if (isReviewMode) {
+            if (k === q.jawaban) cls += " benar";
+            else if (userAnswers[q.nomor] === k) cls += " salah";
+        }
+
+        html += `<div class="${cls}" onclick="answer('${k}')">
+                    <span style="width:25px; font-weight:bold;">${k}.</span>
+                    <span>${q.opsi[k]}</span>
+                 </div>`;
+    });
+    opsiList.innerHTML = html;
+
+    // Buttons
+    document.getElementById("btn-prev").disabled = (currentIndex === 0);
+    document.getElementById("btn-next").disabled = (currentIndex === activeQuestions.length - 1);
+}
+
+function answer(key) {
+    if (isReviewMode) return; // Tidak bisa ganti jawaban saat review
+    const q = activeQuestions[currentIndex];
+    userAnswers[q.nomor] = key;
+    renderQuestion(); // Re-render untuk efek highlight
+}
+
+function nav(dir) {
+    currentIndex += dir;
+    renderQuestion();
+}
+
+// --- TIMER ---
 function startTimer() {
-    waktu = 0;
+    clearInterval(timerInterval);
+    const timerEl = document.getElementById("timer");
     timerInterval = setInterval(() => {
-        waktu++;
-        let m = Math.floor(waktu / 60).toString().padStart(2, '0');
-        let s = (waktu % 60).toString().padStart(2, '0');
-        document.getElementById("timer").innerText = `${m}:${s}`;
+        seconds++;
+        const m = Math.floor(seconds / 60).toString().padStart(2,'0');
+        const s = (seconds % 60).toString().padStart(2,'0');
+        timerEl.innerText = `${m}:${s}`;
     }, 1000);
 }
 
-function tampil() {
-    const s = aktif[index];
-    const containerSoal = document.getElementById("soal-content");
-    const containerOpsi = document.getElementById("opsi-container");
-
-    // Update Progress
-    const persen = ((index + 1) / aktif.length) * 100;
-    document.getElementById("progress-bar").style.width = persen + "%";
-    document.getElementById("status-posisi").innerText = `Soal ${index + 1} dari ${aktif.length}`;
-
-    // Tampil Soal
-    containerSoal.innerHTML = `<h3 style="margin-bottom:10px">Soal Nomor ${s.nomor}</h3><p style="font-size:1.1rem; line-height:1.6">${s.soal}</p>`;
-
-    // --- LOGIC TOGGLE REVIEW (Hanya muncul jika ujian selesai) ---
-    if (isFinished) {
-        reviewHeader.style.display = "block";
-        const isMarked = s.note === "ULANG";
-        reviewHeader.innerHTML = `
-            <div class="review-tools">
-                <span class="toggle-label">Tandai "ULANG"</span>
-                <label class="switch">
-                    <input type="checkbox" id="toggle-${s.nomor}" ${isMarked ? "checked" : ""} onchange="updateMarking('${s.bab}', '${s.nomor}', this)">
-                    <span class="slider round"></span>
-                </label>
-            </div>
-        `;
-    } else {
-        reviewHeader.style.display = "none";
+// --- SUBMIT & SAVE SCORE ---
+function finishExam() {
+    const answeredCount = Object.keys(userAnswers).length;
+    if (answeredCount < activeQuestions.length) {
+        if (!confirm("Masih ada soal kosong. Yakin selesai?")) return;
     }
-    // -----------------------------------------------------------
 
-    // Tampil Opsi
-    let html = "";
-    const keys = Object.keys(s.opsi).sort(); 
-    
-    keys.forEach(k => {
-        let cls = "opsi";
-        if (jawabanUser[s.nomor] === k) cls += " active";
-        
-        // Logic warna jika sudah submit
-        if (isFinished) {
-            if (k === s.jawaban) cls += " benar";
-            if (jawabanUser[s.nomor] === k && k !== s.jawaban) cls += " salah";
-        }
-
-        html += `<div class="${cls}" onclick="${isFinished ? '' : `pilih('${k}')`}">
-                   <span style="width:30px; font-weight:bold">${k}.</span> 
-                   <span>${s.opsi[k]}</span>
-                 </div>`;
-    });
-    containerOpsi.innerHTML = html;
-
-    // Navigasi button state
-    document.getElementById("btn-prev").disabled = (index === 0);
-    document.getElementById("btn-next").disabled = (index === aktif.length - 1);
-}
-
-function pilih(k) {
-    jawabanUser[aktif[index].nomor] = k;
-    tampil();
-}
-
-function next() { if (index < aktif.length - 1) { index++; tampil(); } }
-function prev() { if (index > 0) { index--; tampil(); } }
-
-function confirmSubmit() {
-    const terjawab = Object.keys(jawabanUser).length;
-    if (terjawab < aktif.length) {
-        if (!confirm(`Baru ${terjawab} dari ${aktif.length} soal terjawab. Yakin ingin selesai?`)) return;
-    }
-    submit();
-}
-
-function submit() {
     clearInterval(timerInterval);
-    isFinished = true;
+    
+    // Hitung Nilai
     let benar = 0;
-    aktif.forEach(s => {
-        if (jawabanUser[s.nomor] === s.jawaban) benar++;
+    activeQuestions.forEach(q => {
+        if (userAnswers[q.nomor] === q.jawaban) benar++;
     });
+    const score = Math.round((benar / activeQuestions.length) * 100);
 
-    quizZone.style.display = "none";
-    resultScreen.style.display = "block";
-    
-    const skor = Math.round((benar / aktif.length) * 100);
-    document.getElementById("score-val").innerText = skor;
-    document.getElementById("score-desc").innerText = `Anda menjawab ${benar} benar dari ${aktif.length} soal.`;
+    // Tampilkan Result Overlay
+    document.getElementById("quiz-view").classList.add("hidden");
+    document.getElementById("result-overlay").classList.remove("hidden");
+    document.getElementById("result-score").innerText = score;
+    document.getElementById("result-msg").innerText = `Benar ${benar} dari ${activeQuestions.length} soal.`;
+
+    // KIRIM SCORE KE GOOGLE SHEET
+    // Hanya simpan score jika ini Full Exam (bukan remedial), opsional tergantung kebutuhan
+    // Di sini saya set save setiap kali finish
+    saveScoreToSheet(currentBab, score);
 }
 
-function tutupHasil() {
-    resultScreen.style.display = "none";
-    quizZone.style.display = "block";
-    document.getElementById("btn-submit").style.display = "none"; // Sembunyikan tombol submit
-    index = 0;
-    tampil();
-}
-
-// --- FUNGSI UPDATE KE SPREADSHEET ---
-function updateMarking(bab, nomor, el) {
-    const status = el.checked ? "tandai" : "hapus";
-    const originalText = document.querySelector(".toggle-label").innerText;
-    document.querySelector(".toggle-label").innerText = "Menyimpan...";
-    
-    // Update Lokal Array (Supaya kalau di-next/prev tidak hilang)
-    const currentSoal = aktif.find(x => x.bab == bab && x.nomor == nomor);
-    if(currentSoal) currentSoal.note = el.checked ? "ULANG" : "";
-
-    // Kirim ke Backend
-    fetch(API, {
+function saveScoreToSheet(bab, score) {
+    fetch(API_URL, {
         method: "POST",
-        mode: "no-cors", // Penting untuk GAS
+        mode: "no-cors",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+            action: "saveScore",
             bab: bab,
-            nomor: nomor,
-            action: status
+            score: score
         })
-    }).then(() => {
-        // Karena no-cors, kita anggap sukses jika request terkirim
-        document.querySelector(".toggle-label").innerText = "Tersimpan!";
-        setTimeout(() => {
-             document.querySelector(".toggle-label").innerText = 'Tandai "ULANG"';
-        }, 1000);
-    }).catch(err => {
-        alert("Gagal menyimpan koneksi.");
-        el.checked = !el.checked; // Balikin toggle
-    });
+    }).then(() => console.log("Score saved"));
+}
+
+// --- REVIEW & REMEDIAL MARKING ---
+function reviewMode() {
+    document.getElementById("result-overlay").classList.add("hidden");
+    document.getElementById("quiz-view").classList.remove("hidden");
+    
+    isReviewMode = true;
+    currentIndex = 0;
+    
+    // Ubah UI
+    document.getElementById("btn-finish").style.display = "none";
+    document.getElementById("btn-back-menu").style.display = "block";
+    document.getElementById("btn-back-menu").classList.remove("hidden");
+    
+    renderQuestion();
+}
+
+function toggleMarking(el) {
+    const bab = el.dataset.bab;
+    const nomor = el.dataset.nomor;
+    const action = el.checked ? "tandai" : "hapus";
+
+    // Update Data Lokal (agar realtime di UI tanpa refresh)
+    const q = allData.find(x => x.bab == bab && x.nomor == nomor);
+    if(q) q.note = el.checked ? "ULANG" : "";
+
+    // Kirim ke Backend
+    fetch(API_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            action: action,
+            bab: bab,
+            nomor: nomor
+        })
+    }).catch(err => console.error("Gagal update status", err));
+}
+
+function backToMenu() {
+    window.location.reload();
 }
 </script>
 
